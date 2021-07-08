@@ -1,12 +1,12 @@
 # LibreTranslate
 
-[Try it online!](https://libretranslate.com) | [API Docs](https://libretranslate.com/docs)
+[Try it online!](https://libretranslate.com) | [API Docs](https://libretranslate.com/docs) | [Community Forum](https://community.libretranslate.com/)
 
-[![Python versions](https://img.shields.io/pypi/pyversions/libretranslate)](https://pypi.org/project/libretranslate) [![Run tests](https://github.com/uav4geo/LibreTranslate/workflows/Run%20tests/badge.svg)](https://github.com/uav4geo/LibreTranslate/actions?query=workflow%3A%22Run+tests%22) [![Publish to DockerHub](https://github.com/uav4geo/LibreTranslate/workflows/Publish%20to%20DockerHub/badge.svg)](https://hub.docker.com/r/libretranslate/libretranslate) [![Publish to GitHub Container Registry](https://github.com/uav4geo/LibreTranslate/workflows/Publish%20to%20GitHub%20Container%20Registry/badge.svg)](https://github.com/uav4geo/LibreTranslate/actions?query=workflow%3A%22Publish+to+GitHub+Container+Registry%22)
+[![Python versions](https://img.shields.io/pypi/pyversions/libretranslate)](https://pypi.org/project/libretranslate) [![Run tests](https://github.com/uav4geo/LibreTranslate/workflows/Run%20tests/badge.svg)](https://github.com/uav4geo/LibreTranslate/actions?query=workflow%3A%22Run+tests%22) [![Publish to DockerHub](https://github.com/uav4geo/LibreTranslate/workflows/Publish%20to%20DockerHub/badge.svg)](https://hub.docker.com/r/libretranslate/libretranslate) [![Publish to GitHub Container Registry](https://github.com/uav4geo/LibreTranslate/workflows/Publish%20to%20GitHub%20Container%20Registry/badge.svg)](https://github.com/uav4geo/LibreTranslate/actions?query=workflow%3A%22Publish+to+GitHub+Container+Registry%22) [![Awesome Humane Tech](https://raw.githubusercontent.com/humanetech-community/awesome-humane-tech/main/humane-tech-badge.svg?sanitize=true)](https://github.com/humanetech-community/awesome-humane-tech)
 
 Free and Open Source Machine Translation API, entirely self-hosted. Unlike other APIs, it doesn't rely on proprietary providers such as Google or Azure to perform translations.
 
-![image](https://user-images.githubusercontent.com/1951843/102724116-32a6df00-42db-11eb-8cc0-129ab39cdfb5.png)
+![image](https://user-images.githubusercontent.com/1951843/121782367-23f90080-cb77-11eb-87fd-ed23a21b730f.png)
 
 [Try it online!](https://libretranslate.com) | [API Docs](https://libretranslate.com/docs)
 
@@ -114,9 +114,24 @@ docker-compose up -d --build
 | --frontend-language-source | Set frontend default language - source | `en`          |
 | --frontend-language-target | Set frontend default language - target | `es`          |
 | --frontend-timeout | Set frontend translation timeout | `500`         |
-| --offline | Run user-interface entirely offline (don't use internet CDNs) | `false` |
 | --api-keys | Enable API keys database for per-user rate limits lookup | `Don't use API keys` |
+| --require-api-key-origin | Require use of an API key for programmatic access to the API, unless the request origin matches this domain | `No restrictions on domain origin` |
 | --load-only   | Set available languages    | `all from argostranslate`    |
+
+## Run with Gunicorn
+
+```
+pip install gunicorn
+gunicorn --bind 0.0.0.0:5000 'wsgi:app'
+```
+
+You can pass application arguments directly to Gunicorn via:
+
+
+```
+gunicorn --bind 0.0.0.0:5000 'wsgi:app(api_keys=True)'
+```
+
 
 ## Manage API Keys
 
@@ -151,8 +166,41 @@ You can use the LibreTranslate API using the following bindings:
  - Rust: https://github.com/DefunctLizard/libretranslate-rs
  - Node.js: https://github.com/franciscop/translate
  - .Net: https://github.com/sigaloid/LibreTranslate.Net
+ - Go: https://github.com/SnakeSel/libretranslate
+ - Python: https://github.com/argosopentech/LibreTranslate-py
 
 More coming soon!
+
+## Discourse Plugin
+
+You can use this [discourse translator plugin](https://github.com/LibreTranslate/discourse-translator) to translate [Discourse](https://discourse.org) topics. To install it simply modify `/var/discourse/containers/app.yml`:
+
+```
+## Plugins go here
+## see https://meta.discourse.org/t/19157 for details
+hooks:
+  after_code:
+    - exec:
+        cd: $home/plugins
+        cmd:
+          - git clone https://github.com/discourse/docker_manager.git
+          - git clone https://github.com/LibreTranslate/discourse-translator
+	  ...
+```
+
+Then issue `./launcher rebuild app`. From the Discourse's admin panel then select "LibreTranslate" as a translation provider and set the relevant endpoint configurations.
+
+## Mirrors
+
+This is a list of online resources that serve the LibreTranslate API. Some require an API key. If you want to add a new URL, please open a pull request.
+
+URL |API Key Required|Contact|Cost
+--- | --- | --- | ---
+[libretranslate.com](https://libretranslate.com)|:heavy_check_mark:|[UAV4GEO](https://uav4geo.com/contact)| [$9 / month](https://buy.stripe.com/28obLvdgGcIE5AQfYY), 80 requests / minute limit
+[libretranslate.de](https://libretranslate.de/)|-|-
+[translate.mentality.rip](https://translate.mentality.rip)|-|-
+[translate.astian.org](https://translate.astian.org/)|-|-
+
 
 ## Roadmap
 
@@ -162,6 +210,7 @@ Help us by opening a pull request!
 - [x] Auto-detect input language (thanks [@vemonet](https://github.com/vemonet) !)
 - [X] User authentication / tokens
 - [ ] Language bindings for every computer language
+- [ ] [Improved translations](https://github.com/argosopentech/argos-parallel-corpus)
 
 ## FAQ
 
